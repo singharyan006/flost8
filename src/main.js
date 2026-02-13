@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, Tray, ipcMain, screen } = require('electron');
+const { app, BrowserWindow, Menu, Tray, ipcMain, screen, nativeImage } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
 
@@ -13,12 +13,13 @@ const store = new Store({
 
 let mainWindow;
 let tray;
+let isQuitting = false;
 
 function createWindow() {
   // Get stored window bounds or use defaults
   const bounds = store.get('windowBounds');
   const alwaysOnTop = store.get('alwaysOnTop', true);
-  
+
   // Create the browser window
   mainWindow = new BrowserWindow({
     width: bounds.width,
@@ -45,9 +46,16 @@ function createWindow() {
 
   // Handle window events
   mainWindow.on('close', (event) => {
-    // Save window bounds before closing
-    const bounds = mainWindow.getBounds();
-    store.set('windowBounds', bounds);
+    if (!isQuitting) {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+
+    // Save window bounds
+    if (mainWindow) {
+      const bounds = mainWindow.getBounds();
+      store.set('windowBounds', bounds);
+    }
   });
 
   mainWindow.on('closed', () => {
@@ -64,14 +72,60 @@ function createWindow() {
 }
 
 function createTray() {
-  // Create system tray (optional - can be added later)
-  // For now, we'll skip tray implementation
+  const iconPath = path.join(__dirname, '..', 'assets', 'icon.ico');
+  let trayIcon;
+
+  try {
+    trayIcon = nativeImage.createFromPath(iconPath);
+
+    if (trayIcon.isEmpty()) {
+      // Fallback to screenshot if icon doesn't exist
+      const pngPath = path.join(__dirname, '..', 'assets', 'screenshot.png');
+      trayIcon = nativeImage.createFromPath(pngPath).resize({ width: 16, height: 16 });
+    }
+
+    if (trayIcon.isEmpty()) {
+      console.log('No valid icon found for tray');
+      return;
+    }
+
+    tray = new Tray(trayIcon);
+
+    const contextMenu = Menu.buildFromTemplate([
+      {
+        label: 'Show App',
+        click: () => mainWindow.show()
+      },
+      {
+        label: 'Quit',
+        click: () => {
+          isQuitting = true;
+          app.quit();
+        }
+      }
+    ]);
+
+    tray.setToolTip('Todo Widget');
+    tray.setContextMenu(contextMenu);
+
+    tray.on('click', () => {
+      if (mainWindow.isVisible()) {
+        mainWindow.hide();
+      } else {
+        mainWindow.show();
+      }
+    });
+
+  } catch (error) {
+    console.error('Failed to create tray:', error);
+  }
 }
 
 // App event handlers
 app.whenReady().then(() => {
   createWindow();
-  
+  createTray();
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -81,7 +135,7 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit();
+    // Keep running in tray
   }
 });
 
