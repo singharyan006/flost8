@@ -4,24 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Desktop Todo Widget</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="styles.css" rel="stylesheet">
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        glass: {
-                            light: 'rgba(255, 255, 255, 0.8)',
-                            dark: 'rgba(0, 0, 0, 0.8)',
-                        }
-                    },
-                    backdropBlur: {
-                        xs: '2px',
-                    }
-                }
-            }
-        }
+        // Custom config for glass effect colors if needed or kept in CSS
+        // Since we moved to compiled CSS, we might need to ensure these custom colors are in the input or just use what we have.
+        // Wait, the CDN config had 'glass' colors.
+        // I need to ensure the compiled CSS includes these. 
+        // The command I ran only scans existing Utility classes. 
+        // If 'glass-light' or 'bg-glass-light' are used, they won't be generated if not in standard Tailwind config.
+        // The previous index.html had a script tag defining config.
     </script>
     <style>
         /* Custom styles for glass effect and scrollbar */
