@@ -2,6 +2,11 @@ const { app, BrowserWindow, Menu, Tray, ipcMain, screen, nativeImage } = require
 const path = require('path');
 const Store = require('electron-store');
 
+// Fix for GPU crash with transparent windows
+app.disableHardwareAcceleration();
+app.commandLine.appendSwitch('disable-gpu');
+app.commandLine.appendSwitch('disable-software-rasterizer');
+
 // Initialize store for settings
 const store = new Store({
   defaults: {
