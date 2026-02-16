@@ -39,6 +39,7 @@ function createWindow() {
     resizable: true,
     skipTaskbar: false,
     titleBarStyle: 'hidden',
+    icon: path.join(__dirname, '..', 'assets', 'icon.ico'), // Set application icon
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
