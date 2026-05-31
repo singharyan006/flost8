@@ -97,9 +97,17 @@ class TodoWidget {
     }
 
     addTask(text) {
+        let validText;
+        try {
+            validText = this.validateTaskText(text);
+        } catch (err) {
+            console.warn('Invalid task text:', err.message);
+            return;
+        }
+
         const task = {
-            id: Date.now() + Math.random(),
-            text: text,
+            id: this.generateId(),
+            text: validText,
             completed: false,
             createdAt: new Date().toISOString()
         };
@@ -377,6 +385,33 @@ class TodoWidget {
         if (diffDays < 7) return `${diffDays}d ago`;
 
         return date.toLocaleDateString();
+    }
+
+    // Generate a stable unique ID for tasks. Prefer crypto.randomUUID() when available.
+    generateId() {
+        try {
+            if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+                return crypto.randomUUID();
+            }
+        } catch (e) {
+            // ignore and fallback
+        }
+
+        // Fallback: simple UUID v4 implementation
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.floor(Math.random() * 16);
+            const v = c === 'x' ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+        });
+    }
+
+    // Basic validation for task text. Throws on invalid input.
+    validateTaskText(text) {
+        if (typeof text !== 'string') throw new Error('Task text must be a string');
+        const trimmed = text.trim();
+        if (trimmed.length === 0) throw new Error('Task text cannot be empty');
+        if (trimmed.length > 1000) throw new Error('Task text exceeds maximum length (1000)');
+        return trimmed;
     }
 }
 
