@@ -12,6 +12,14 @@ class TodoWidget {
         await this.loadSettings();
         this.setupEventListeners();
         await this.loadTasks();
+        // Attach UI renderer handlers if available (incremental migration)
+        if (window.uiRenderer && typeof window.uiRenderer.attachHandlers === 'function') {
+            window.uiRenderer.attachHandlers({
+                onToggle: (id) => this.toggleTask(id),
+                onDelete: (id) => this.deleteTask(id),
+                onEditStart: (id) => this.enableTaskEditing(id)
+            });
+        }
         this.updateUI();
         this.applyTheme();
     }
@@ -222,75 +230,17 @@ class TodoWidget {
     }
 
     updateUI() {
-        this.renderTasks();
+        if (window.uiRenderer && typeof window.uiRenderer.renderTasks === 'function') {
+            window.uiRenderer.renderTasks(this.tasks);
+        } else {
+            this.renderTasks();
+        }
         this.updateTaskCount();
         this.updateClearButton();
         this.updateEmptyState();
     }
 
-    renderTasks() {
-        const tasksList = document.getElementById('tasksList');
-
-        if (this.tasks.length === 0) {
-            tasksList.innerHTML = '';
-            return;
-        }
-
-        const tasksHTML = this.tasks.map(task => this.createTaskHTML(task)).join('');
-        tasksList.innerHTML = tasksHTML;
-
-        // Add event listeners to task elements
-        this.tasks.forEach(task => {
-            const taskElement = document.querySelector(`[data-task-id="${task.id}"]`);
-            if (taskElement) {
-                const checkbox = taskElement.querySelector('.task-checkbox');
-                const deleteBtn = taskElement.querySelector('.delete-btn');
-                const textContainer = taskElement.querySelector('.task-text-container');
-
-                checkbox.addEventListener('change', () => this.toggleTask(task.id));
-                deleteBtn.addEventListener('click', () => this.deleteTask(task.id));
-
-                // Double click to edit
-                if (!task.completed) {
-                    textContainer.addEventListener('dblclick', () => this.enableTaskEditing(task.id));
-                }
-            }
-        });
-    }
-
-    createTaskHTML(task) {
-        const isCompleted = task.completed ? 'completed' : '';
-        const textDecoration = task.completed ? 'line-through' : '';
-        const opacity = task.completed ? 'opacity-60' : '';
-
-        return `
-            <div class="task-item ${opacity} bg-white/10 dark:bg-black/10 rounded-lg p-3 border border-white/20 dark:border-white/5 hover:border-white/40 dark:hover:border-white/10 transition-all group" data-task-id="${task.id}">
-                <div class="flex items-start space-x-3">
-                    <label class="flex items-center cursor-pointer pt-0.5">
-                        <input type="checkbox" class="task-checkbox sr-only" ${task.completed ? 'checked' : ''}>
-                        <div class="w-5 h-5 rounded-full border-2 border-gray-400 dark:border-gray-500 flex items-center justify-center transition-all ${task.completed ? 'bg-green-500 border-green-500' : 'hover:border-green-400'}">
-                            ${task.completed ? '<svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' : ''}
-                        </div>
-                    </label>
-                    <div class="flex-1 min-w-0 task-text-container cursor-text" title="Double-click to edit">
-                        <p class="text-sm text-gray-800 dark:text-gray-200 ${textDecoration} break-words leading-relaxed">
-                            ${this.escapeHtml(task.text)}
-                        </p>
-                        ${task.completed && task.completedAt ? `
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                Completed ${this.formatDate(task.completedAt)}
-                            </p>
-                        ` : ''}
-                    </div>
-                    <button class="delete-btn opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-500/20 transition-all" title="Delete task">
-                        <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        `;
-    }
+    // renderTasks and createTaskHTML are now handled by src/renderer/modules/uiRenderer.js
 
     updateTaskCount() {
         const total = this.tasks.length;
