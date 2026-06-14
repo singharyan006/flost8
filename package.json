@@ -1,5 +1,5 @@
 {
-  "name": "desktop-todo-widget",
+  "name": "flost8",
   "version": "1.0.0",
   "description": "A lightweight, always-visible desktop to-do list widget",
   "main": "src/main.js",
@@ -39,8 +39,8 @@
     "electron-store": "^8.1.0"
   },
   "build": {
-    "appId": "com.example.desktop-todo-widget",
-    "productName": "Desktop Todo Widget",
+    "appId": "com.example.flost8",
+    "productName": "flost8",
     "directories": {
       "output": "dist"
     },
