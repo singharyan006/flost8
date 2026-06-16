@@ -111,7 +111,7 @@ function createTray() {
       }
     ]);
 
-    tray.setToolTip('Todo Widget');
+    tray.setToolTip('flost8');
     tray.setContextMenu(contextMenu);
 
     tray.on('click', () => {
