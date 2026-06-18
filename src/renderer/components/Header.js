@@ -8,7 +8,10 @@ export class Header {
         
         // Revolving text elements
         this.brandTitle = document.getElementById('brandTitle');
+        this.brandTextContainer = document.getElementById('brandTextContainer');
+        this.mainContentArea = document.getElementById('mainContentArea');
         
+        this.isCompact = false;
         this.revolveInterval = null;
         this.revolveIndex = 0;
 
@@ -20,6 +23,9 @@ export class Header {
     }
 
     attachHandlers() {
+        if (this.brandTextContainer) {
+            this.brandTextContainer.addEventListener('click', () => this.toggleCompactMode());
+        }
 
         if (this.minimizeBtn) {
             this.minimizeBtn.addEventListener('click', () => window.electronAPI.minimizeWindow());
@@ -50,6 +56,26 @@ export class Header {
             this.revolveIndex = (this.revolveIndex + 1) % 4;
             this.updateRevolvingText();
         }, 3000);
+    }
+
+    async toggleCompactMode() {
+        this.isCompact = !this.isCompact;
+        
+        if (this.isCompact) {
+            this.mainContentArea.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                if (this.isCompact) this.mainContentArea.classList.add('hidden');
+            }, 300);
+        } else {
+            this.mainContentArea.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                this.mainContentArea.classList.remove('opacity-0', 'pointer-events-none');
+            });
+        }
+
+        if (window.electronAPI && window.electronAPI.setCompactMode) {
+            await window.electronAPI.setCompactMode(this.isCompact);
+        }
     }
     
     updateRevolvingText() {
