@@ -19,6 +19,7 @@ const store = new Store({
 let mainWindow;
 let tray;
 let isQuitting = false;
+let savedHeight = 480;
 
 function createWindow() {
   // Get stored window bounds or use defaults
@@ -32,13 +33,13 @@ function createWindow() {
     x: bounds.x,
     y: bounds.y,
     minWidth: 280,
+    maxWidth: 400,
     minHeight: 400,
     frame: false,
     transparent: true,
     alwaysOnTop: alwaysOnTop,
     resizable: true,
     skipTaskbar: true,
-    titleBarStyle: 'hidden',
     icon: path.join(__dirname, '..', 'assets', 'icon.ico'), // Set application icon
     webPreferences: {
       nodeIntegration: false,
@@ -129,6 +130,10 @@ function createTray() {
 
 // App event handlers
 app.whenReady().then(() => {
+  if (process.platform === 'darwin') {
+    app.dock.hide();
+  }
+  
   createWindow();
   createTray();
 
@@ -167,6 +172,19 @@ ipcMain.handle('minimize-window', () => {
 
 ipcMain.handle('close-window', () => {
   mainWindow.close();
+});
+
+ipcMain.handle('set-compact-mode', (event, isCompact) => {
+  if (!mainWindow) return;
+  const bounds = mainWindow.getBounds();
+  if (isCompact) {
+    savedHeight = bounds.height;
+    mainWindow.setMinimumSize(280, 70);
+    mainWindow.setSize(bounds.width, 70, true);
+  } else {
+    mainWindow.setSize(bounds.width, savedHeight, true);
+    mainWindow.setMinimumSize(280, 400);
+  }
 });
 
 ipcMain.handle('get-screen-size', () => {
