@@ -5,11 +5,22 @@ export class Header {
         this.themeBtn = document.getElementById('themeBtn');
         this.minimizeBtn = document.getElementById('minimizeBtn');
         this.closeBtn = document.getElementById('closeBtn');
+        
+        // Revolving text elements
+        this.brandTitle = document.getElementById('brandTitle');
+        
+        this.revolveInterval = null;
+        this.revolveIndex = 0;
 
         this.attachHandlers();
+        
+        if (this.brandTitle) {
+            this.startRevolvingText();
+        }
     }
 
     attachHandlers() {
+
         if (this.minimizeBtn) {
             this.minimizeBtn.addEventListener('click', () => window.electronAPI.minimizeWindow());
         }
@@ -30,6 +41,41 @@ export class Header {
                 if (this.callbacks.onThemeToggle) this.callbacks.onThemeToggle();
             });
         }
+    }
+    
+    startRevolvingText() {
+        this.revolveIndex = 0;
+        this.updateRevolvingText();
+        this.revolveInterval = setInterval(() => {
+            this.revolveIndex = (this.revolveIndex + 1) % 4;
+            this.updateRevolvingText();
+        }, 3000);
+    }
+    
+    updateRevolvingText() {
+        this.brandTitle.style.opacity = '0';
+        
+        setTimeout(() => {
+            switch(this.revolveIndex) {
+                case 0:
+                    this.brandTitle.innerText = "flost8";
+                    break;
+                case 1:
+                    const dateOpts = { month: 'long', day: 'numeric', year: 'numeric' };
+                    this.brandTitle.innerText = new Date().toLocaleDateString(undefined, dateOpts);
+                    break;
+                case 2:
+                    const timeOpts = { hour: 'numeric', minute: '2-digit' };
+                    this.brandTitle.innerText = new Date().toLocaleTimeString(undefined, timeOpts);
+                    break;
+                case 3:
+                    const count = this.callbacks.getTaskCount ? this.callbacks.getTaskCount() : 0;
+                    this.brandTitle.innerText = `${count} pending`;
+                    break;
+            }
+            
+            this.brandTitle.style.opacity = '1';
+        }, 150);
     }
 
     updateAlwaysOnTopButton(isAlwaysOnTop) {
