@@ -31,7 +31,8 @@ class TodoWidgetApp {
 
         // 2. Initialize Components
         this.header = new Header({
-            onThemeToggle: () => this.toggleTheme()
+            onThemeToggle: () => this.toggleTheme(),
+            getTaskCount: () => this.state.tasks.filter(t => !t.completed).length
         });
 
         this.taskList = new TaskList('tasksList', {
