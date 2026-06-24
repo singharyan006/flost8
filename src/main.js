@@ -37,7 +37,7 @@ function createWindow() {
     transparent: true,
     alwaysOnTop: alwaysOnTop,
     resizable: true,
-    skipTaskbar: false,
+    skipTaskbar: true,
     titleBarStyle: 'hidden',
     icon: path.join(__dirname, '..', 'assets', 'icon.ico'), // Set application icon
     webPreferences: {
@@ -52,15 +52,15 @@ function createWindow() {
 
   // Handle window events
   mainWindow.on('close', (event) => {
-    if (!isQuitting) {
-      event.preventDefault();
-      mainWindow.hide();
-    }
-
     // Save window bounds
     if (mainWindow) {
       const bounds = mainWindow.getBounds();
       store.set('windowBounds', bounds);
+    }
+
+    if (!isQuitting) {
+      isQuitting = true;
+      app.quit();
     }
   });
 
