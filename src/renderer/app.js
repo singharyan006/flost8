@@ -1,408 +1,210 @@
-// Desktop Todo Widget - Main Application Logic
-class TodoWidget {
+import { loadTasks, saveTasks, loadTheme, saveTheme, loadAlwaysOnTop } from './services/storeService.js';
+import { createTask, toggleTask, updateTask, deleteTask, listTasks } from './services/taskManager.js';
+import { Header } from './components/Header.js';
+import { TaskList } from './components/TaskList.js';
+import { TaskInput } from './components/TaskInput.js';
+
+class AppState {
     constructor() {
         this.tasks = [];
         this.currentTheme = 'dark';
         this.isAlwaysOnTop = true;
+    }
+}
+
+class TodoWidgetApp {
+    constructor() {
+        this.state = new AppState();
+        this.header = null;
+        this.taskList = null;
+        this.taskInput = null;
 
         this.init();
     }
 
     async init() {
-        await this.loadSettings();
-        this.setupEventListeners();
-        await this.loadTasks();
-        // Attach UI renderer handlers if available (incremental migration)
-        if (window.uiRenderer && typeof window.uiRenderer.attachHandlers === 'function') {
-            window.uiRenderer.attachHandlers({
-                onToggle: (id) => this.toggleTask(id),
-                onDelete: (id) => this.deleteTask(id),
-                onEditStart: (id) => this.enableTaskEditing(id)
-            });
-        }
+        // 1. Load initial data
+        this.state.currentTheme = await loadTheme();
+        this.state.isAlwaysOnTop = await loadAlwaysOnTop();
+        const savedTasks = await loadTasks();
+        this.state.tasks = savedTasks || [];
+
+        // 2. Initialize Components
+        this.header = new Header({
+            onThemeToggle: () => this.toggleTheme()
+        });
+
+        this.taskList = new TaskList('tasksList', {
+            onToggle: (id) => this.handleToggleTask(id),
+            onDelete: (id) => this.handleDeleteTask(id),
+            onEditStart: (id) => this.handleEditStart(id),
+            onEditSave: (id, newText) => this.handleEditSave(id, newText),
+            onEditCancel: () => this.updateUI() // just re-render to revert
+        });
+
+        this.taskInput = new TaskInput({
+            onAddTask: (text) => this.handleAddTask(text),
+            onClearCompleted: () => this.handleClearCompleted()
+        });
+
+        // 3. Setup Global Keyboard shortcuts
+        this.setupKeyboardShortcuts();
+
+        // 4. Initial Render
         this.updateUI();
-        this.applyTheme();
-    }
-
-    async loadSettings() {
-        try {
-            this.currentTheme = await window.electronAPI.getStoreValue('theme', 'dark');
-            this.isAlwaysOnTop = await window.electronAPI.getStoreValue('alwaysOnTop', true);
-        } catch (error) {
-            console.error('Error loading settings:', error);
-        }
-    }
-
-    async loadTasks() {
-        try {
-            this.tasks = await window.electronAPI.getStoreValue('tasks', []);
-        } catch (error) {
-            console.error('Error loading tasks:', error);
-            this.tasks = [];
-        }
-    }
-
-    async saveTasks() {
-        try {
-            await window.electronAPI.setStoreValue('tasks', this.tasks);
-        } catch (error) {
-            console.error('Error saving tasks:', error);
-        }
-    }
-
-    setupEventListeners() {
-        // Task input handlers
-        const taskInput = document.getElementById('taskInput');
-        const addBtn = document.getElementById('addBtn');
-
-        taskInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && taskInput.value.trim()) {
-                this.addTask(taskInput.value.trim());
-                taskInput.value = '';
-            }
-        });
-
-        addBtn.addEventListener('click', () => {
-            if (taskInput.value.trim()) {
-                this.addTask(taskInput.value.trim());
-                taskInput.value = '';
-            }
-        });
-
-        // Window control handlers
-        document.getElementById('minimizeBtn').addEventListener('click', () => {
-            window.electronAPI.minimizeWindow();
-        });
-
-        document.getElementById('closeBtn').addEventListener('click', () => {
-            window.electronAPI.closeWindow();
-        });
-
-        document.getElementById('alwaysOnTopBtn').addEventListener('click', async () => {
-            this.isAlwaysOnTop = await window.electronAPI.toggleAlwaysOnTop();
-            this.updateAlwaysOnTopButton();
-        });
-
-        document.getElementById('themeBtn').addEventListener('click', () => {
-            this.toggleTheme();
-        });
-
-        document.getElementById('clearCompletedBtn').addEventListener('click', () => {
-            this.clearCompleted();
-        });
-
-        // Focus management
-        taskInput.addEventListener('focus', () => {
-            taskInput.select();
-        });
+        this.header.applyTheme(this.state.currentTheme);
+        this.header.updateAlwaysOnTopButton(this.state.isAlwaysOnTop);
 
         // Auto-focus on app activation
         window.addEventListener('focus', () => {
-            if (!taskInput.matches(':focus')) {
-                taskInput.focus();
-            }
+            this.taskInput.focus();
+        });
+        window.addEventListener('load', () => {
+            this.taskInput.focus();
         });
     }
 
-    addTask(text) {
-        let validText;
+    // --- Actions ---
+
+    handleAddTask(text) {
         try {
-            validText = this.validateTaskText(text);
-        } catch (err) {
-            console.warn('Invalid task text:', err.message);
-            return;
+            this.state = createTask(this.state, text);
+            this.persistTasks();
+            this.updateUI();
+            
+            // Animation for new task
+            setTimeout(() => {
+                const newTask = this.state.tasks[0]; // createTask puts it at the beginning
+                if (newTask) {
+                    const el = document.querySelector(`[data-task-id="${newTask.id}"]`);
+                    if (el) el.classList.add('slide-in');
+                }
+            }, 10);
+        } catch (error) {
+            console.warn('Invalid task:', error.message);
         }
+    }
 
-        const task = {
-            id: this.generateId(),
-            text: validText,
-            completed: false,
-            createdAt: new Date().toISOString()
-        };
+    handleToggleTask(id) {
+        this.state = toggleTask(this.state, id);
+        this.persistTasks();
 
-        this.tasks.unshift(task);
-        this.saveTasks();
+        // Animation for completion
+        const task = this.state.tasks.find(t => t.id === id);
+        const taskElement = document.querySelector(`[data-task-id="${id}"]`);
+        if (taskElement && task && task.completed) {
+            taskElement.classList.add('task-complete');
+            setTimeout(() => {
+                if (taskElement) taskElement.classList.remove('task-complete');
+            }, 300);
+        }
+        
         this.updateUI();
-
-        // Add animation to new task
-        setTimeout(() => {
-            const taskElement = document.querySelector(`[data-task-id="${task.id}"]`);
-            if (taskElement) {
-                taskElement.classList.add('slide-in');
-            }
-        }, 10);
     }
 
-    toggleTask(taskId) {
-        const task = this.tasks.find(t => t.id === taskId);
-        if (task) {
-            task.completed = !task.completed;
-            task.completedAt = task.completed ? new Date().toISOString() : null;
-            this.saveTasks();
-
-            // Add completion animation
-            const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
-            if (taskElement && task.completed) {
-                taskElement.classList.add('task-complete');
-                setTimeout(() => taskElement.classList.remove('task-complete'), 300);
-            }
-
-            this.updateUI();
-        }
-    }
-
-    editTask(taskId, newText) {
-        const task = this.tasks.find(t => t.id === taskId);
-        if (task && newText.trim() !== '') {
-            task.text = newText.trim();
-            this.saveTasks();
-            this.updateUI();
-        } else if (newText.trim() === '') {
-            // Optionally delete if empty or just revert?
-            // Let's just do nothing (revert to old text implicitly by re-rendering) 
-            // or maybe we should delete? Standard behavior usually is don't allow empty.
-            this.updateUI();
-        }
-    }
-
-    enableTaskEditing(taskId) {
-        const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
-        if (!taskElement) return;
-
-        const textContainer = taskElement.querySelector('.task-text-container');
-        const textElement = textContainer.querySelector('p');
-        const currentText = this.tasks.find(t => t.id === taskId)?.text || '';
-
-        // Create input element
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = currentText;
-        input.className = 'w-full bg-transparent border-b border-blue-500 focus:outline-none text-sm text-gray-800 dark:text-gray-200 py-0.5';
-
-        // Replace text with input
-        textContainer.innerHTML = '';
-        textContainer.appendChild(input);
-        input.focus();
-
-        // Handle save on blur or enter
-        const save = () => {
-            this.editTask(taskId, input.value);
-        };
-
-        input.addEventListener('blur', save);
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                input.blur(); // Triggers save via blur
-            } else if (e.key === 'Escape') {
-                this.updateUI(); // Revert changes
-            }
-        });
-    }
-
-    deleteTask(taskId) {
-        const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+    handleDeleteTask(id) {
+        const taskElement = document.querySelector(`[data-task-id="${id}"]`);
         if (taskElement) {
             taskElement.classList.add('fade-out');
             setTimeout(() => {
-                this.tasks = this.tasks.filter(t => t.id !== taskId);
-                this.saveTasks();
+                this.state = deleteTask(this.state, id);
+                this.persistTasks();
                 this.updateUI();
             }, 200);
+        } else {
+            this.state = deleteTask(this.state, id);
+            this.persistTasks();
+            this.updateUI();
         }
     }
 
-    clearCompleted() {
-        const completedTasks = this.tasks.filter(t => t.completed);
+    handleEditStart(id) {
+        const task = this.state.tasks.find(t => t.id === id);
+        if (task) {
+            this.taskList.enableEditing(id, task.text);
+        }
+    }
+
+    handleEditSave(id, newText) {
+        if (newText.trim() !== '') {
+            this.state = updateTask(this.state, id, { text: newText });
+            this.persistTasks();
+        }
+        this.updateUI();
+    }
+
+    handleClearCompleted() {
+        const completedTasks = this.state.tasks.filter(t => t.completed);
         if (completedTasks.length === 0) return;
 
         completedTasks.forEach(task => {
             const taskElement = document.querySelector(`[data-task-id="${task.id}"]`);
-            if (taskElement) {
-                taskElement.classList.add('fade-out');
-            }
+            if (taskElement) taskElement.classList.add('fade-out');
         });
 
         setTimeout(() => {
-            this.tasks = this.tasks.filter(t => !t.completed);
-            this.saveTasks();
+            completedTasks.forEach(task => {
+                this.state = deleteTask(this.state, task.id);
+            });
+            this.persistTasks();
             this.updateUI();
         }, 200);
     }
 
-    updateUI() {
-        if (window.uiRenderer && typeof window.uiRenderer.renderTasks === 'function') {
-            window.uiRenderer.renderTasks(this.tasks);
-        } else {
-            this.renderTasks();
-        }
-        this.updateTaskCount();
-        this.updateClearButton();
-        this.updateEmptyState();
-    }
-
-    // renderTasks and createTaskHTML are now handled by src/renderer/modules/uiRenderer.js
-
-    updateTaskCount() {
-        const total = this.tasks.length;
-        const completed = this.tasks.filter(t => t.completed).length;
-        const remaining = total - completed;
-
-        const taskCountElement = document.getElementById('taskCount');
-        if (total === 0) {
-            taskCountElement.textContent = '0 tasks';
-        } else if (completed === 0) {
-            taskCountElement.textContent = `${total} ${total === 1 ? 'task' : 'tasks'}`;
-        } else {
-            taskCountElement.textContent = `${remaining} of ${total} remaining`;
-        }
-    }
-
-    updateClearButton() {
-        const clearBtn = document.getElementById('clearCompletedBtn');
-        const hasCompleted = this.tasks.some(t => t.completed);
-
-        if (hasCompleted) {
-            clearBtn.classList.remove('hidden');
-        } else {
-            clearBtn.classList.add('hidden');
-        }
-    }
-
-    updateEmptyState() {
-        const emptyState = document.getElementById('emptyState');
-        const tasksList = document.getElementById('tasksList');
-
-        if (this.tasks.length === 0) {
-            emptyState.classList.remove('hidden');
-            tasksList.classList.add('hidden');
-        } else {
-            emptyState.classList.add('hidden');
-            tasksList.classList.remove('hidden');
-        }
-    }
-
-    updateAlwaysOnTopButton() {
-        const btn = document.getElementById('alwaysOnTopBtn');
-        const svg = btn.querySelector('svg');
-
-        if (this.isAlwaysOnTop) {
-            btn.title = 'Always On Top (Enabled)';
-            btn.classList.add('bg-blue-500/20', 'text-blue-500');
-        } else {
-            btn.title = 'Always On Top (Disabled)';
-            btn.classList.remove('bg-blue-500/20', 'text-blue-500');
-        }
-    }
-
     async toggleTheme() {
-        this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
-        await window.electronAPI.setStoreValue('theme', this.currentTheme);
-        this.applyTheme();
+        this.state.currentTheme = this.state.currentTheme === 'dark' ? 'light' : 'dark';
+        await saveTheme(this.state.currentTheme);
+        this.header.applyTheme(this.state.currentTheme);
     }
 
-    applyTheme() {
-        const html = document.documentElement;
-        const app = document.getElementById('app');
+    // --- Core Updates ---
 
-        if (this.currentTheme === 'dark') {
-            html.classList.add('dark');
-            app.classList.remove('glass-light');
-            app.classList.add('glass-dark');
-        } else {
-            html.classList.remove('dark');
-            app.classList.remove('glass-dark');
-            app.classList.add('glass-light');
-        }
+    updateUI() {
+        this.taskList.render(this.state.tasks);
+        this.taskList.updateEmptyState(this.state.tasks.length);
+        this.taskInput.updateStats(this.state.tasks);
     }
 
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+    async persistTasks() {
+        await saveTasks(this.state.tasks);
     }
 
-    formatDate(dateString) {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffMs = now - date;
-        const diffMins = Math.floor(diffMs / 60000);
-        const diffHours = Math.floor(diffMins / 60);
-        const diffDays = Math.floor(diffHours / 24);
+    // --- Shortcuts ---
 
-        if (diffMins < 1) return 'just now';
-        if (diffMins < 60) return `${diffMins}m ago`;
-        if (diffHours < 24) return `${diffHours}h ago`;
-        if (diffDays < 7) return `${diffDays}d ago`;
-
-        return date.toLocaleDateString();
-    }
-
-    // Generate a stable unique ID for tasks. Prefer crypto.randomUUID() when available.
-    generateId() {
-        try {
-            if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-                return crypto.randomUUID();
+    setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + N: Focus on input
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                this.taskInput.focus();
             }
-        } catch (e) {
-            // ignore and fallback
-        }
 
-        // Fallback: simple UUID v4 implementation
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = Math.floor(Math.random() * 16);
-            const v = c === 'x' ? r : (r & 0x3) | 0x8;
-            return v.toString(16);
+            // Escape: Clear input or minimize window
+            if (e.key === 'Escape') {
+                const inputEl = document.getElementById('taskInput');
+                if (inputEl && inputEl.value) {
+                    inputEl.value = '';
+                } else {
+                    window.electronAPI.minimizeWindow();
+                }
+            }
+
+            // Ctrl/Cmd + Shift + C: Clear completed tasks
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
+                e.preventDefault();
+                this.handleClearCompleted();
+            }
+
+            // Ctrl/Cmd + T: Toggle theme
+            if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+                e.preventDefault();
+                this.toggleTheme();
+            }
         });
-    }
-
-    // Basic validation for task text. Throws on invalid input.
-    validateTaskText(text) {
-        if (typeof text !== 'string') throw new Error('Task text must be a string');
-        const trimmed = text.trim();
-        if (trimmed.length === 0) throw new Error('Task text cannot be empty');
-        if (trimmed.length > 1000) throw new Error('Task text exceeds maximum length (1000)');
-        return trimmed;
     }
 }
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.todoWidget = new TodoWidget();
-});
-
-// Handle app focus for better UX
-window.addEventListener('load', () => {
-    const taskInput = document.getElementById('taskInput');
-    taskInput.focus();
-});
-
-// Keyboard shortcuts
-document.addEventListener('keydown', (e) => {
-    // Ctrl/Cmd + N: Focus on input
-    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-        e.preventDefault();
-        document.getElementById('taskInput').focus();
-    }
-
-    // Escape: Clear input or minimize window
-    if (e.key === 'Escape') {
-        const taskInput = document.getElementById('taskInput');
-        if (taskInput.value) {
-            taskInput.value = '';
-        } else {
-            window.electronAPI.minimizeWindow();
-        }
-    }
-
-    // Ctrl/Cmd + Shift + C: Clear completed tasks
-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
-        e.preventDefault();
-        window.todoWidget?.clearCompleted();
-    }
-
-    // Ctrl/Cmd + T: Toggle theme
-    if ((e.ctrlKey || e.metaKey) && e.key === 't') {
-        e.preventDefault();
-        window.todoWidget?.toggleTheme();
-    }
+    window.todoWidget = new TodoWidgetApp();
 });
