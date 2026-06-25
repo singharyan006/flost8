@@ -180,13 +180,11 @@ class TodoWidgetApp {
                 this.taskInput.focus();
             }
 
-            // Escape: Clear input or minimize window
+            // Escape: Clear input
             if (e.key === 'Escape') {
                 const inputEl = document.getElementById('taskInput');
                 if (inputEl && inputEl.value) {
                     inputEl.value = '';
-                } else {
-                    window.electronAPI.minimizeWindow();
                 }
             }
 
