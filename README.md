@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="#-quick-start"><img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue?style=flat-square" alt="Platform"></a>
+  <a href="#-quick-start"><img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20-blue?style=flat-square" alt="Platform"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License"></a>
   <a href="https://www.electronjs.org/"><img src="https://img.shields.io/badge/Built%20with-Electron-47848F?style=flat-square&logo=electron&logoColor=white" alt="Electron"></a>
   <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Styled%20with-Tailwind%20CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS"></a>
@@ -24,46 +24,20 @@
 
 <br>
 
-## ✨ Features
+## Features
 
-<table>
-  <tr>
-    <td width="50%">
-
-**🔲 Always On Top**<br>
-Stays visible above all other windows — never buried behind your work.
-
-**⚡ Instant Task Management**<br>
-Add, complete, edit, and delete tasks with zero friction.
-
-**💾 Persistent Storage**<br>
-Tasks are saved locally and restored automatically on startup.
-
-**🎨 Theme Switching**<br>
-Seamless light & dark mode — preference remembered between sessions.
-
-</td>
-<td width="50%">
-
-**🖱️ Draggable & Resizable**<br>
-Position and size the widget exactly how you want it.
-
-**⌨️ Keyboard Shortcuts**<br>
-Power-user hotkeys for ultra-fast task management.
-
-**🧊 Glass Morphism UI**<br>
-Frameless, transparent design with backdrop blur effects.
-
-**📌 System Tray**<br>
-Minimize to tray, restore with a single click.
-
-</td>
-  </tr>
-</table>
+- **Always On Top** — Stays visible above all other windows — never buried behind your work.
+- **Instant Task Management** — Add, complete, edit, and delete tasks with zero friction.
+- **Persistent Storage** — Tasks are saved locally and restored automatically on startup.
+- **Theme Switching** — Seamless light & dark mode — preference remembered between sessions.
+- **Draggable & Resizable** — Position and size the widget exactly how you want it.
+- **Keyboard Shortcuts** — Power-user hotkeys for ultra-fast task management.
+- **Glass Morphism UI** — Frameless, transparent design with backdrop blur effects.
+- **System Tray** — Minimize to tray, restore with a single click.
 
 <br>
 
-## 🖼️ Screenshots
+## Screenshots
 
 <p align="center">
   <em>Works seamlessly over any application — Discord, VS Code, browsers, and more.</em>
@@ -90,7 +64,7 @@ Minimize to tray, restore with a single click.
 
 <br>
 
-## 📥 Download
+## Download
 
 <p align="center">
   <a href="https://github.com/singharyan006/desktop-todo-widget/releases/latest/download/flost8.exe">
@@ -109,7 +83,7 @@ Minimize to tray, restore with a single click.
 </p>
 
 <details>
-<summary><b>🔧 Build from source</b></summary>
+<summary><b>Build from source</b></summary>
 
 <br>
 
@@ -137,42 +111,36 @@ npm run build:linux  # Linux (.AppImage)
 
 <br>
 
-## 🎮 Usage
+## Usage
 
 ### Basic Operations
 
-| Action | How |
-|---|---|
-| **Add task** | Type in the input field → press `Enter` or click `+` |
-| **Complete task** | Click the circle checkbox |
-| **Edit task** | Double-click the task text |
-| **Delete task** | Hover over a task → click the trash icon |
-| **Clear completed** | Click "Clear Done" in the footer |
+- **Add task**: Type in the input field → press `Enter` or click `+`
+- **Complete task**: Click the circle checkbox
+- **Edit task**: Double-click the task text
+- **Delete task**: Hover over a task → click the trash icon
+- **Clear completed**: Click "Clear Done" in the footer
 
 ### Window Controls
 
-| Control | Action |
-|---|---|
-| **Move** | Drag from the title bar |
-| **Resize** | Drag the corner handle (⋲) |
-| **Pin on Top** | Click the pin icon to toggle always-on-top |
-| **Theme** | Click the moon icon to switch light/dark |
-| **Close** | Click `×` to quit |
-| **Compact Mode** | Click the brand name to collapse/expand |
+- **Move**: Drag from the title bar
+- **Resize**: Drag the corner handle (⋲)
+- **Pin on Top**: Click the pin icon to toggle always-on-top
+- **Theme**: Click the moon icon to switch light/dark
+- **Close**: Click `×` to quit
+- **Compact Mode**: Click the brand name to collapse/expand
 
 ### Keyboard Shortcuts
 
-| Shortcut | Action |
-|---|---|
-| `Enter` | Add new task |
-| `Ctrl/⌘ + N` | Focus input field |
-| `Ctrl/⌘ + T` | Toggle theme |
-| `Ctrl/⌘ + Shift + C` | Clear all completed tasks |
-| `Escape` | Clear input field |
+- **`Enter`**: Add new task
+- **`Ctrl/⌘ + N`**: Focus input field
+- **`Ctrl/⌘ + T`**: Toggle theme
+- **`Ctrl/⌘ + Shift + C`**: Clear all completed tasks
+- **`Escape`**: Clear input field
 
 <br>
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 flost8/
@@ -205,16 +173,14 @@ flost8/
 
 ### Tech Stack
 
-| Technology | Purpose |
-|---|---|
-| [Electron](https://www.electronjs.org/) | Desktop app framework |
-| [Tailwind CSS v4](https://tailwindcss.com/) | Utility-first styling |
-| [electron-store](https://github.com/sindresorhus/electron-store) | Persistent local storage |
-| [electron-builder](https://www.electron.build/) | Packaging & distribution |
+- **[Electron](https://www.electronjs.org/)** — Desktop app framework
+- **[Tailwind CSS v4](https://tailwindcss.com/)** — Utility-first styling
+- **[electron-store](https://github.com/sindresorhus/electron-store)** — Persistent local storage
+- **[electron-builder](https://www.electron.build/)** — Packaging & distribution
 
 <br>
 
-## 🔒 Security
+## Security
 
 flost8 follows Electron security best practices:
 
@@ -226,20 +192,18 @@ flost8 follows Electron security best practices:
 
 <br>
 
-## 🎨 Customization
+## Customization
 
-| Setting | Default | Notes |
-|---|---|---|
-| Window size | 320 × 480 px | Resizable within 280–400 px width |
-| Theme | Dark | Persisted between sessions |
-| Always on top | Enabled | Can be toggled via pin icon |
-| Window position | Remembered | Saved on close, restored on launch |
+- **Window size**: 320 × 480 px (Resizable within 280–400 px width)
+- **Theme**: Dark (Persisted between sessions)
+- **Always on top**: Enabled (Can be toggled via pin icon)
+- **Window position**: Remembered (Saved on close, restored on launch)
 
 All preferences are stored via `electron-store` and persist across restarts.
 
 <br>
 
-## 📋 Roadmap
+## Roadmap
 
 - [x] Always-on-top widget
 - [x] System tray integration
@@ -258,7 +222,7 @@ All preferences are stored via `electron-store` and persist across restarts.
 
 <br>
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Here's how:
 
@@ -270,13 +234,13 @@ Contributions are welcome! Here's how:
 
 <br>
 
-## 📄 License
+## License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 <br>
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with [Electron](https://www.electronjs.org/)
 - Styled with [Tailwind CSS](https://tailwindcss.com/)
