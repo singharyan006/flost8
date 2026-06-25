@@ -39,7 +39,7 @@ function createWindow() {
     transparent: true,
     alwaysOnTop: alwaysOnTop,
     resizable: true,
-    skipTaskbar: true,
+    skipTaskbar: false,
     icon: path.join(__dirname, '..', 'assets', 'icon.ico'), // Set application icon
     webPreferences: {
       nodeIntegration: false,
@@ -50,6 +50,12 @@ function createWindow() {
 
   // Load the app
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+
+  // Aggressively enforce always on top and workspaces
+  if (alwaysOnTop) {
+    mainWindow.setAlwaysOnTop(true, 'screen-saver');
+  }
+  mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
 
   // Handle window events
   mainWindow.on('close', (event) => {
@@ -84,12 +90,6 @@ function createTray() {
 
   try {
     trayIcon = nativeImage.createFromPath(iconPath);
-
-    if (trayIcon.isEmpty()) {
-      // Fallback to screenshot if icon doesn't exist
-      const pngPath = path.join(__dirname, '..', 'assets', 'screenshot.png');
-      trayIcon = nativeImage.createFromPath(pngPath).resize({ width: 16, height: 16 });
-    }
 
     if (trayIcon.isEmpty()) {
       console.log('No valid icon found for tray');
@@ -128,9 +128,24 @@ function createTray() {
   }
 }
 
-// App event handlers
-app.whenReady().then(() => {
-  if (process.platform === 'darwin') {
+// Single instance lock
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, focus our existing window instead.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      if (!mainWindow.isVisible()) mainWindow.show();
+      mainWindow.focus();
+    }
+  });
+
+  // App event handlers
+  app.whenReady().then(() => {
+    if (process.platform === 'darwin') {
     app.dock.hide();
   }
   
@@ -144,11 +159,12 @@ app.whenReady().then(() => {
   });
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    // Keep running in tray
-  }
-});
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      // Keep running in tray
+    }
+  });
+}
 
 // IPC handlers
 ipcMain.handle('get-store-value', (event, key, defaultValue) => {
@@ -161,13 +177,17 @@ ipcMain.handle('set-store-value', (event, key, value) => {
 
 ipcMain.handle('toggle-always-on-top', () => {
   const current = mainWindow.isAlwaysOnTop();
-  mainWindow.setAlwaysOnTop(!current);
+  if (!current) {
+    mainWindow.setAlwaysOnTop(true, 'screen-saver');
+  } else {
+    mainWindow.setAlwaysOnTop(false);
+  }
   store.set('alwaysOnTop', !current);
   return !current;
 });
 
 ipcMain.handle('minimize-window', () => {
-  mainWindow.minimize();
+  mainWindow.hide(); // Hide to tray instead of standard minimize
 });
 
 ipcMain.handle('close-window', () => {
