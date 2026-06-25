@@ -1,246 +1,293 @@
-# Desktop Todo Widget
+<p align="center">
+  <img src="assets/icon-png.png" alt="flost8 Logo" width="160">
+</p>
 
-A lightweight, always-visible desktop to-do list widget built with Electron.js. Stay productive with a beautiful, minimal interface that keeps your tasks visible while you work.
+<h1 align="center">flost8</h1>
 
-![Desktop Todo Widget](assets/screenshot.png)
+<p align="center">
+  <strong>A lightweight, always-visible desktop to-do list widget built with Electron.</strong><br>
+  Stay focused. Stay productive. Never lose track of what matters.
+</p>
+
+<p align="center">
+  <a href="#-quick-start"><img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue?style=flat-square" alt="Platform"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License"></a>
+  <a href="https://www.electronjs.org/"><img src="https://img.shields.io/badge/Built%20with-Electron-47848F?style=flat-square&logo=electron&logoColor=white" alt="Electron"></a>
+  <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Styled%20with-Tailwind%20CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS"></a>
+</p>
+
+---
+
+<p align="center">
+  <img src="assets/Homescreen.png" alt="flost8 running on desktop" width="800">
+</p>
+
+<br>
 
 ## ✨ Features
 
-### Core Features
-- **Always-on-top widget** - Stays visible above all other windows
-- **Quick task management** - Add, complete, and delete tasks instantly  
-- **Persistent storage** - Tasks are saved locally and restored on startup
-- **Draggable & resizable** - Position and size the widget to your liking
-- **Frameless design** - Clean, modern interface with glass morphism effects
-- **Theme switching** - Light and dark theme support
-- **Keyboard shortcuts** - Ultra-fast task management with hotkeys
+<table>
+  <tr>
+    <td width="50%">
 
-### UI/UX
-- **Glass morphism design** - Transparent background with blur effects
-- **Smooth animations** - Delightful micro-interactions
-- **Responsive layout** - Scales gracefully when resized
-- **Auto-focus input** - Ready to type when you activate the widget
-- **Task completion tracking** - See when tasks were completed
-- **Empty state guidance** - Helpful hints when no tasks exist
+**🔲 Always On Top**<br>
+Stays visible above all other windows — never buried behind your work.
 
-## 🚀 Quick Start
+**⚡ Instant Task Management**<br>
+Add, complete, edit, and delete tasks with zero friction.
 
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
+**💾 Persistent Storage**<br>
+Tasks are saved locally and restored automatically on startup.
 
-### Installation
+**🎨 Theme Switching**<br>
+Seamless light & dark mode — preference remembered between sessions.
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/singharyan006/desktop-todo-widget.git
-   cd desktop-todo-widget
-   ```
+</td>
+<td width="50%">
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+**🖱️ Draggable & Resizable**<br>
+Position and size the widget exactly how you want it.
 
-3. **Run in development mode**
-   ```bash
-   npm start
-   # or for development with DevTools
-   npm run dev
-   ```
+**⌨️ Keyboard Shortcuts**<br>
+Power-user hotkeys for ultra-fast task management.
 
-4. **Build for production**
-   ```bash
-   # Build for Windows (current working setup)
-   npm run build
-   
-   # Alternative builds (requires additional setup)
-   npm run build:win    # Windows (using electron-builder)
-   npm run build:mac    # macOS (using electron-builder)
-   npm run build:linux  # Linux (using electron-builder)
-   ```
+**🧊 Glass Morphism UI**<br>
+Frameless, transparent design with backdrop blur effects.
 
-5. **Run the built application**
-   ```bash
-   # After building, run the executable
-   dist/desktop-todo-widget-win32-x64/desktop-todo-widget.exe
-   ```
+**📌 System Tray**<br>
+Minimize to tray, restore with a single click.
+
+</td>
+  </tr>
+</table>
+
+<br>
+
+## 🖼️ Screenshots
+
+<p align="center">
+  <em>Works seamlessly over any application — Discord, VS Code, browsers, and more.</em>
+</p>
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/discord.png" alt="flost8 over Discord" width="100%"><br>
+      <sub><b>Over Discord</b> — Track tasks while chatting</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/editor.png" alt="flost8 over VS Code" width="100%"><br>
+      <sub><b>Over VS Code</b> — Keep your to-do list visible while coding</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <img src="assets/web.png" alt="flost8 compact mode" width="340"><br>
+      <sub><b>Compact Mode</b> — Minimal footprint when you need more screen space</sub>
+    </td>
+  </tr>
+</table>
+
+<br>
+
+## 📥 Download
+
+<p align="center">
+  <a href="https://github.com/singharyan006/desktop-todo-widget/releases/latest/download/flost8.exe">
+    <img src="https://img.shields.io/badge/⬇_Windows-flost8.exe-0078D4?style=for-the-badge&logo=windows&logoColor=white" alt="Download for Windows">
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://github.com/singharyan006/desktop-todo-widget/releases/latest/download/flost8.dmg">
+    <img src="https://img.shields.io/badge/⬇_macOS-flost8.dmg-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Download for macOS">
+  </a>
+</p>
+
+<p align="center">
+  <sub>
+    <a href="https://github.com/singharyan006/desktop-todo-widget/releases/latest">View all releases →</a>
+  </sub>
+</p>
+
+<details>
+<summary><b>🔧 Build from source</b></summary>
+
+<br>
+
+**Prerequisites:** [Node.js](https://nodejs.org/) v16+ and npm
+
+```bash
+# Clone & install
+git clone https://github.com/singharyan006/desktop-todo-widget.git
+cd desktop-todo-widget
+npm install
+
+# Run locally
+npm start
+
+# Or build an installer
+npm run build:win    # Windows (.exe)
+npm run build:mac    # macOS (.dmg)
+npm run build:linux  # Linux (.AppImage)
+```
+
+> Built files are output to the `dist/` directory.
+
+</details>
+
+
+<br>
 
 ## 🎮 Usage
 
 ### Basic Operations
-- **Add task**: Type in the input field and press Enter, or click the + button
-- **Complete task**: Click the circle checkbox next to any task
-- **Delete task**: Hover over a task and click the red trash icon
-- **Clear completed**: Click "Clear completed" in the bottom bar when available
+
+| Action | How |
+|---|---|
+| **Add task** | Type in the input field → press `Enter` or click `+` |
+| **Complete task** | Click the circle checkbox |
+| **Edit task** | Double-click the task text |
+| **Delete task** | Hover over a task → click the trash icon |
+| **Clear completed** | Click "Clear Done" in the footer |
 
 ### Window Controls
-- **Move window**: Drag from anywhere on the title bar
-- **Resize window**: Drag from the resize handle (⋲) in the bottom right
-- **Always on top**: Click the pin icon to toggle always-on-top behavior
-- **Theme switching**: Click the moon icon to switch between light/dark themes
-- **Minimize**: Click the minus icon
-- **Close**: Click the X icon
+
+| Control | Action |
+|---|---|
+| **Move** | Drag from the title bar |
+| **Resize** | Drag the corner handle (⋲) |
+| **Pin on Top** | Click the pin icon to toggle always-on-top |
+| **Theme** | Click the moon icon to switch light/dark |
+| **Close** | Click `×` to quit |
+| **Compact Mode** | Click the brand name to collapse/expand |
 
 ### Keyboard Shortcuts
-- `Enter` - Add new task (when input is focused)
-- `Ctrl/Cmd + N` - Focus on input field
-- `Ctrl/Cmd + T` - Toggle theme
-- `Ctrl/Cmd + Shift + C` - Clear all completed tasks
-- `Escape` - Clear input field or minimize window
+
+| Shortcut | Action |
+|---|---|
+| `Enter` | Add new task |
+| `Ctrl/⌘ + N` | Focus input field |
+| `Ctrl/⌘ + T` | Toggle theme |
+| `Ctrl/⌘ + Shift + C` | Clear all completed tasks |
+| `Escape` | Clear input field |
+
+<br>
 
 ## 🏗️ Architecture
 
-### Project Structure
 ```
-desktop-todo-widget/
+flost8/
 ├── src/
-│   ├── main.js           # Electron main process
-│   ├── preload.js        # Secure IPC bridge
+│   ├── main.js                    # Electron main process
+│   ├── preload.js                 # Secure IPC bridge
 │   └── renderer/
-│       ├── index.html    # Main UI
-│       └── app.js        # Frontend logic
-├── assets/               # Icons and images
-├── package.json          # Dependencies and build config
+│       ├── index.html             # Main UI
+│       ├── app.js                 # App entry point & state management
+│       ├── styles.css             # Compiled Tailwind CSS
+│       ├── components/
+│       │   ├── Header.js          # Title bar, theme toggle, compact mode
+│       │   ├── TaskInput.js       # Input field & stats footer
+│       │   ├── TaskItem.js        # Individual task element builder
+│       │   └── TaskList.js        # Task list renderer & event delegation
+│       ├── services/
+│       │   ├── storeService.js    # Persistence layer (electron-store)
+│       │   └── taskManager.js     # Pure task CRUD functions
+│       └── utils/
+│           └── helpers.js         # ID generation, HTML escaping, date formatting
+├── assets/
+│   ├── icon-png.png               # App icon (PNG)
+│   └── icon.ico                   # App icon (Windows)
+├── .github/workflows/
+│   └── build.yml                  # CI/CD — automated builds for Win & Mac
+├── package.json
+├── LICENSE
 └── README.md
 ```
 
-### Technology Stack
-- **Electron.js** - Desktop app framework
-- **TailwindCSS** - Utility-first CSS framework
-- **electron-store** - Persistent data storage
-- **electron-packager** - App packaging and distribution
+### Tech Stack
 
-### Key Components
+| Technology | Purpose |
+|---|---|
+| [Electron](https://www.electronjs.org/) | Desktop app framework |
+| [Tailwind CSS v4](https://tailwindcss.com/) | Utility-first styling |
+| [electron-store](https://github.com/sindresorhus/electron-store) | Persistent local storage |
+| [electron-builder](https://www.electron.build/) | Packaging & distribution |
 
-1. **Main Process** (`src/main.js`)
-   - Creates and manages the application window
-   - Handles window controls (minimize, close, always-on-top)
-   - Manages application lifecycle
-   - Provides secure IPC communication
+<br>
 
-2. **Preload Script** (`src/preload.js`)
-   - Secure bridge between main and renderer processes
-   - Exposes limited APIs to the frontend
-   - Follows Electron security best practices
+## 🔒 Security
 
-3. **Renderer Process** (`src/renderer/`)
-   - Contains the UI and application logic
-   - Handles task CRUD operations
-   - Manages themes and animations
-   - Provides keyboard shortcuts
+flost8 follows Electron security best practices:
+
+- `nodeIntegration` is **disabled**
+- `contextIsolation` is **enabled**
+- All IPC goes through a secure `contextBridge` preload
+- No use of the deprecated `remote` module
+- User input is HTML-escaped to prevent XSS
+
+<br>
 
 ## 🎨 Customization
 
-### Themes
-The app supports light and dark themes. Theme preference is automatically saved and restored on startup.
+| Setting | Default | Notes |
+|---|---|---|
+| Window size | 320 × 480 px | Resizable within 280–400 px width |
+| Theme | Dark | Persisted between sessions |
+| Always on top | Enabled | Can be toggled via pin icon |
+| Window position | Remembered | Saved on close, restored on launch |
 
-### Window Behavior
-- Default size: 320x480px
-- Minimum size: 280x400px
-- Always-on-top: Enabled by default
-- Position: Remembered between sessions
+All preferences are stored via `electron-store` and persist across restarts.
 
-### Styling
-The UI uses TailwindCSS with custom glass morphism effects. You can customize colors, spacing, and animations by modifying the CSS in `index.html`.
-
-## 🔧 Development
-
-### Development Mode
-```bash
-npm run dev
-```
-This runs the app with developer tools enabled for debugging.
-
-### Building
-The app currently uses electron-packager for creating distributable packages:
-
-- **Windows**: Creates portable application folder with .exe
-- **macOS**: Can create .app bundle (requires additional setup)
-- **Linux**: Can create executable (requires additional setup)
-
-**Note**: The current setup is optimized for Windows development. For advanced packaging features like installers, auto-updates, or code signing, electron-builder is available but may require additional Windows permissions for symbolic link creation.
-
-### Adding Features
-1. **New IPC endpoints**: Add to `main.js` and `preload.js`
-2. **UI changes**: Modify `index.html` and `app.js`
-3. **Styling**: Update TailwindCSS classes in the HTML
-4. **Storage**: Use the electron-store instance for persistence
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**App won't start**
-- Ensure Node.js v16+ is installed
-- Delete `node_modules` and run `npm install` again
-
-**Build fails with symbolic link errors**
-- This is a known issue with electron-builder on Windows
-- Use `npm run build` (electron-packager) instead
-- For electron-builder, run PowerShell as Administrator
-
-**Window not visible**
-- The window might be off-screen. Delete the config file to reset position
-- Config location varies by OS (check electron-store documentation)
-
-**Tasks not saving**
-- Check file permissions in the user data directory
-- Look for errors in the developer console (`npm run dev`)
-
-**Always-on-top not working**
-- This feature may not work properly in some Linux desktop environments
-- Try toggling the setting off and on again
+<br>
 
 ## 📋 Roadmap
 
-### Planned Features
-- [ ] System tray integration
-- [ ] Auto-launch on system startup  
-- [ ] Task categories/tags
-- [ ] Cloud synchronization
-- [ ] Task reminders/notifications
-- [ ] Drag-and-drop task reordering
-- [ ] Import/export functionality
+- [x] Always-on-top widget
+- [x] System tray integration
+- [x] Light & dark themes
+- [x] Glass morphism UI
+- [x] Keyboard shortcuts
+- [x] Compact mode
+- [x] CI/CD pipeline
+- [ ] Auto-launch on system startup
+- [ ] Task categories & tags
+- [ ] Drag-and-drop reordering
+- [ ] Due dates & priorities
+- [ ] Cloud sync
+- [ ] Task reminders & notifications
 - [ ] Multiple task lists
-- [ ] Due dates and priorities
-- [ ] Search and filtering
 
-### Stretch Goals
-- [ ] Plugin system
-- [ ] Custom themes
-- [ ] Collaboration features
-- [ ] Mobile companion app
-- [ ] Integration with task management services
+<br>
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Here's how:
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. **Fork** the repository
+2. **Create** a feature branch — `git checkout -b feature/amazing-feature`
+3. **Commit** your changes — `git commit -m 'Add amazing feature'`
+4. **Push** to the branch — `git push origin feature/amazing-feature`
+5. **Open** a Pull Request
+
+<br>
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+<br>
 
 ## 🙏 Acknowledgments
 
 - Built with [Electron](https://www.electronjs.org/)
-- Styled with [TailwindCSS](https://tailwindcss.com/)
+- Styled with [Tailwind CSS](https://tailwindcss.com/)
 - Icons from [Heroicons](https://heroicons.com/)
-- Storage powered by [electron-store](https://github.com/sindresorhus/electron-store)
-
-## 📞 Support
-
-If you encounter any issues or have questions:
-1. Check the [Issues](https://github.com/your-username/desktop-todo-widget/issues) page
-2. Create a new issue with detailed information
-3. Join our [Discord community](https://discord.gg/your-invite) for live support
+- Storage by [electron-store](https://github.com/sindresorhus/electron-store)
+- Packaged with [electron-builder](https://www.electron.build/)
 
 ---
 
-**Made with ❤️ for productivity enthusiasts**
+<p align="center">
+  <img src="assets/icon-png.png" alt="flost8" width="48"><br>
+  <strong>Made with ❤️ by <a href="https://github.com/singharyan006">Aryan Singh</a></strong><br>
+  <sub>Focus on what matters most.</sub>
+</p>
