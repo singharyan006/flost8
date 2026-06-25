@@ -3,7 +3,6 @@ export class Header {
         this.callbacks = callbacks;
         this.alwaysOnTopBtn = document.getElementById('alwaysOnTopBtn');
         this.themeBtn = document.getElementById('themeBtn');
-        this.minimizeBtn = document.getElementById('minimizeBtn');
         this.closeBtn = document.getElementById('closeBtn');
         
         // Revolving text elements
@@ -25,10 +24,6 @@ export class Header {
     attachHandlers() {
         if (this.brandTextContainer) {
             this.brandTextContainer.addEventListener('click', () => this.toggleCompactMode());
-        }
-
-        if (this.minimizeBtn) {
-            this.minimizeBtn.addEventListener('click', () => window.electronAPI.minimizeWindow());
         }
 
         if (this.closeBtn) {
