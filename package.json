@@ -1,14 +1,13 @@
 {
-  "name": "desktop-todo-widget",
-  "version": "1.0.0",
+  "name": "flost8",
+  "version": "2.0.0",
   "description": "A lightweight, always-visible desktop to-do list widget",
   "main": "src/main.js",
-  "author": "Your Name",
+  "author": "Aryan Singh",
   "license": "MIT",
   "scripts": {
     "start": "electron .",
     "dev": "electron . --dev",
-    "build": "electron-packager . desktop-todo-widget --platform=win32 --arch=x64 --out=dist --overwrite",
     "build:electron-builder": "electron-builder",
     "build:win": "electron-builder --win",
     "build:mac": "electron-builder --mac",
@@ -26,25 +25,27 @@
     "@tailwindcss/cli": "^4.2.0",
     "electron": "^27.0.0",
     "electron-builder": "^24.6.4",
-    "electron-packager": "^17.1.2",
     "tailwindcss": "^4.2.0"
   },
   "dependencies": {
     "electron-store": "^8.1.0"
   },
   "build": {
-    "appId": "com.example.desktop-todo-widget",
-    "productName": "Desktop Todo Widget",
+    "appId": "com.example.flost8",
+    "productName": "flost8",
+    "artifactName": "${productName}.${ext}",
     "directories": {
       "output": "dist"
     },
     "files": [
       "src/**/*",
+      "assets/**/*",
       "package.json"
     ],
     "compression": "store",
     "win": {
-      "target": "dir"
+      "target": "nsis",
+      "icon": "assets/icon.ico"
     },
     "mac": {
       "target": "dmg",

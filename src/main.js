@@ -19,6 +19,7 @@ const store = new Store({
 let mainWindow;
 let tray;
 let isQuitting = false;
+let savedHeight = 480;
 
 function createWindow() {
   // Get stored window bounds or use defaults
@@ -32,13 +33,13 @@ function createWindow() {
     x: bounds.x,
     y: bounds.y,
     minWidth: 280,
+    maxWidth: 400,
     minHeight: 400,
     frame: false,
     transparent: true,
     alwaysOnTop: alwaysOnTop,
     resizable: true,
     skipTaskbar: false,
-    titleBarStyle: 'hidden',
     icon: path.join(__dirname, '..', 'assets', 'icon.ico'), // Set application icon
     webPreferences: {
       nodeIntegration: false,
@@ -50,17 +51,23 @@ function createWindow() {
   // Load the app
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 
+  // Aggressively enforce always on top and workspaces
+  if (alwaysOnTop) {
+    mainWindow.setAlwaysOnTop(true, 'screen-saver');
+  }
+  mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+
   // Handle window events
   mainWindow.on('close', (event) => {
-    if (!isQuitting) {
-      event.preventDefault();
-      mainWindow.hide();
-    }
-
     // Save window bounds
     if (mainWindow) {
       const bounds = mainWindow.getBounds();
       store.set('windowBounds', bounds);
+    }
+
+    if (!isQuitting) {
+      isQuitting = true;
+      app.quit();
     }
   });
 
@@ -85,12 +92,6 @@ function createTray() {
     trayIcon = nativeImage.createFromPath(iconPath);
 
     if (trayIcon.isEmpty()) {
-      // Fallback to screenshot if icon doesn't exist
-      const pngPath = path.join(__dirname, '..', 'assets', 'screenshot.png');
-      trayIcon = nativeImage.createFromPath(pngPath).resize({ width: 16, height: 16 });
-    }
-
-    if (trayIcon.isEmpty()) {
       console.log('No valid icon found for tray');
       return;
     }
@@ -111,7 +112,7 @@ function createTray() {
       }
     ]);
 
-    tray.setToolTip('Todo Widget');
+    tray.setToolTip('flost8');
     tray.setContextMenu(contextMenu);
 
     tray.on('click', () => {
@@ -127,8 +128,27 @@ function createTray() {
   }
 }
 
-// App event handlers
-app.whenReady().then(() => {
+// Single instance lock
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, focus our existing window instead.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      if (!mainWindow.isVisible()) mainWindow.show();
+      mainWindow.focus();
+    }
+  });
+
+  // App event handlers
+  app.whenReady().then(() => {
+    if (process.platform === 'darwin') {
+    app.dock.hide();
+  }
+  
   createWindow();
   createTray();
 
@@ -139,11 +159,12 @@ app.whenReady().then(() => {
   });
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    // Keep running in tray
-  }
-});
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      // Keep running in tray
+    }
+  });
+}
 
 // IPC handlers
 ipcMain.handle('get-store-value', (event, key, defaultValue) => {
@@ -156,17 +177,34 @@ ipcMain.handle('set-store-value', (event, key, value) => {
 
 ipcMain.handle('toggle-always-on-top', () => {
   const current = mainWindow.isAlwaysOnTop();
-  mainWindow.setAlwaysOnTop(!current);
+  if (!current) {
+    mainWindow.setAlwaysOnTop(true, 'screen-saver');
+  } else {
+    mainWindow.setAlwaysOnTop(false);
+  }
   store.set('alwaysOnTop', !current);
   return !current;
 });
 
 ipcMain.handle('minimize-window', () => {
-  mainWindow.minimize();
+  mainWindow.hide(); // Hide to tray instead of standard minimize
 });
 
 ipcMain.handle('close-window', () => {
   mainWindow.close();
+});
+
+ipcMain.handle('set-compact-mode', (event, isCompact) => {
+  if (!mainWindow) return;
+  const bounds = mainWindow.getBounds();
+  if (isCompact) {
+    savedHeight = bounds.height;
+    mainWindow.setMinimumSize(280, 70);
+    mainWindow.setSize(bounds.width, 70, true);
+  } else {
+    mainWindow.setSize(bounds.width, savedHeight, true);
+    mainWindow.setMinimumSize(280, 400);
+  }
 });
 
 ipcMain.handle('get-screen-size', () => {

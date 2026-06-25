@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   toggleAlwaysOnTop: () => ipcRenderer.invoke('toggle-always-on-top'),
   minimizeWindow: () => ipcRenderer.invoke('minimize-window'),
   closeWindow: () => ipcRenderer.invoke('close-window'),
+  setCompactMode: (isCompact) => ipcRenderer.invoke('set-compact-mode', isCompact),
   getScreenSize: () => ipcRenderer.invoke('get-screen-size'),
   
   // Platform info
