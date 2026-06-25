@@ -67,18 +67,18 @@
 ## Download
 
 <p align="center">
-  <a href="https://github.com/singharyan006/desktop-todo-widget/releases/latest/download/flost8.exe">
+  <a href="https://github.com/singharyan006/flost8/releases/latest/download/flost8.exe">
     <img src="https://img.shields.io/badge/⬇_Windows-flost8.exe-0078D4?style=for-the-badge&logo=windows&logoColor=white" alt="Download for Windows">
   </a>
   &nbsp;&nbsp;
-  <a href="https://github.com/singharyan006/desktop-todo-widget/releases/latest/download/flost8.dmg">
+  <a href="https://github.com/singharyan006/flost8/releases/latest/download/flost8.dmg">
     <img src="https://img.shields.io/badge/⬇_macOS-flost8.dmg-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Download for macOS">
   </a>
 </p>
 
 <p align="center">
   <sub>
-    <a href="https://github.com/singharyan006/desktop-todo-widget/releases/latest">View all releases →</a>
+    <a href="https://github.com/singharyan006/flost8/releases/latest">View all releases →</a>
   </sub>
 </p>
 
@@ -91,8 +91,8 @@
 
 ```bash
 # Clone & install
-git clone https://github.com/singharyan006/desktop-todo-widget.git
-cd desktop-todo-widget
+git clone https://github.com/singharyan006/flost8.git
+cd flost8
 npm install
 
 # Run locally
