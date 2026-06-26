@@ -19,7 +19,7 @@
 ---
 
 <p align="center">
-  <img src="assets/flost8.png" alt="flost8 Application Interface" width="500">
+  <img src="assets/flost8.png" alt="flost8 Application Interface" width="300">
 </p>
 
 <br>
@@ -63,9 +63,13 @@ flost8 is a lightweight utility engineered to solve a single problem: context sw
 
 <table>
   <tr>
-    <td align="center" colspan="2">
+    <td align="center" width="50%">
       <img src="assets/Homescreen.png" alt="flost8 on Homescreen" width="100%"><br>
-      <sub><b>Desktop View</b> — Clean integration with your desktop environment</sub>
+      <sub><b>Desktop View</b> — Clean desktop integration</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/web.png" alt="flost8 compact mode" width="100%"><br>
+      <sub><b>Compact Mode</b> — Minimal footprint</sub>
     </td>
   </tr>
   <tr>
@@ -75,16 +79,11 @@ flost8 is a lightweight utility engineered to solve a single problem: context sw
     </td>
     <td align="center" width="50%">
       <img src="assets/editor.png" alt="flost8 over VS Code" width="100%"><br>
-      <sub><b>Over VS Code</b> — Keep your to-do list visible while coding</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" colspan="2">
-      <img src="assets/web.png" alt="flost8 compact mode" width="340"><br>
-      <sub><b>Compact Mode</b> — Minimal footprint when you need more screen space</sub>
+      <sub><b>Over VS Code</b> — Always visible while coding</sub>
     </td>
   </tr>
 </table>
+
 
 <br>
 
